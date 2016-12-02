@@ -1,0 +1,113 @@
+﻿@media screen and (min-width: 1024px) {
+    .side-container{
+        width: 400px;
+        max-width: 400px;
+    }
+
+    /*.btn.btn-create:before,
+    .btn.btn-skip:before{
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 20px;
+        width: 30px;
+        height: 28px;
+    }
+
+    .btn.btn-create:before{
+        background: url(../images/icons/sprite.png) no-repeat -150px 0;
+    }
+
+    .btn.btn-skip:before{
+        background: url(../images/icons/sprite.png) no-repeat -192px 0;
+    }*/
+
+    .tab.icon{
+        padding-left: 35px;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    h1{
+        margin: 20px 0;
+        font-size: 30px;
+    }
+
+    h2{
+        font-size: 22px;
+    }
+
+    .header{
+        height: 54px;
+    }
+
+    .btn.btn-create, .btn.btn-skip,
+    .btn.btn-recalculate, .btn{
+        height: 32px;
+        line-height: 32px;
+    }
+
+    .btn{
+        font-size: 14px;
+    }
+
+    .btn-gray{
+        height: 28px;
+        line-height: 28px;
+    }
+
+    .shop-list .profit{
+        font-size: 14px;
+    }
+
+    .shop-list .profit-line{
+        line-height: 22px;
+    }
+
+    .stats-table{
+        font-size: 14px;
+    }
+
+    .stats-table th, .stats-table td{
+        padding: 2px 5px;
+    }
+
+    .side-container .profile{
+        max-width: 340px;
+    }
+
+    .side-container{
+        width: 340px;
+    }
+
+    .tab.icon{
+        padding-left: 28px;
+    }
+
+    .stats-table-header .cash {
+        font-size: 18px;
+    }
+
+    .btn.btn-create, .btn.btn-skip,
+    .btn.btn-recalculate{
+        font-size: 14px;
+        margin: 0 20px 0 0;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    body:after{
+        content: "Your screen resolution is lower than 768px and is currently not supported.";
+        display: block;
+        text-align: center;
+        margin: 50px 20px 0 20px;
+        color: #c10c06;
+        font-size: 16px;
+    }
+
+    .content-area-overflow,
+    .btn-create,
+    .btn-skip{
+        display: none;
+    }
+}

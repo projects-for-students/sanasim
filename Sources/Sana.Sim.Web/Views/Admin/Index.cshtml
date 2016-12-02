@@ -1,0 +1,11 @@
+﻿@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+    ViewData["Title"] = "Admin";
+}
+
+<h1>Admin</h1>
+
+<a asp-action="Index" asp-controller="AdminFeatures" class="btn btn-inline">Features</a>
+<a asp-action="Index" asp-controller="AdminActions" class="btn btn-inline">Marketing actions</a>
+<a asp-action="Index" asp-controller="AdminDevelopers" class="btn btn-inline">Developers</a>
+<a asp-action="Index" asp-controller="AdminServers" class="btn btn-inline">Servers</a>

@@ -1,0 +1,23 @@
+﻿@model EntityListViewModel<Server>
+@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+    ViewData["Title"] = "Admin - Servers list";
+}
+
+<h1>Servers</h1>
+
+<div class="form-row">
+    <a asp-action="Create" class="btn">Create server</a>
+</div>
+
+<div class="features-group">
+    <h2>Servers list</h2>
+    <ul class="reset features-list">
+        @foreach (var entity in Model.Entities)
+        {
+            <li class="feature">
+                <a asp-action="Edit" asp-route-id="@entity.Id" class="feature-link">@entity.Name</a>
+            </li>
+        }
+    </ul>
+</div>

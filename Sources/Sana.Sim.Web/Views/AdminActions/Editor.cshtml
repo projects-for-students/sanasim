@@ -1,0 +1,84 @@
+﻿@model ActionInputViewModel
+@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+    ViewData["Title"] = "Admin - Create Marketing action";
+    
+    bool isCreate = Model == null || Model.Id == null;
+    string action = isCreate ? "Create" : "Edit";
+}
+
+<h1>Create Marketing action</h1>
+
+<div>
+    <form method="post" asp-action="@action">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Name"></label>
+            </div>
+            <div class="form-value">
+                <input type="text" asp-for="Name" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Tag"></label>
+            </div>
+            <div class="form-value">
+                <input type="text" asp-for="Tag" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="ImplementationCost"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="ImplementationCost" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Duration"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="Duration" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="OfflineUsersConversionRate"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="OfflineUsersConversionRate" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="NewOnlineUsersAmount"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="NewOnlineUsersAmount" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="AverageOrderAmountIncreaseRate"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="AverageOrderAmountIncreaseRate" />
+            </div>
+        </div>
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="btn-bottom">
+            <input type="submit" value="Save" class="btn" />
+        </div>
+    </form>
+</div>

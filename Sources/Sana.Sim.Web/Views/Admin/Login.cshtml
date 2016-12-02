@@ -1,0 +1,33 @@
+﻿@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+}
+
+@model LoginInputViewModel
+
+<h1>Login</h1>
+
+<form asp-action="Login" asp-controller="Admin">
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="UserName"></label>
+        </div>
+        <div class="form-value">
+            <input type="text" asp-for="UserName" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="Password"></label>
+        </div>
+        <div class="form-value">
+            <input type="password" asp-for="Password" />
+        </div>
+    </div>
+
+    <div asp-validation-summary="All"></div>
+
+    <div class="btn-bottom">
+        <button class="btn">Login</button>
+    </div>
+</form>

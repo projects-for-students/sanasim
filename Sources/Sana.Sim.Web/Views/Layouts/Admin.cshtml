@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Views/Layouts/Base.cshtml";
+}
+
+@section Actions
+{
+    <div class="header-item end-game">
+        <a class="btn btn-gray" asp-controller="Home" asp-action="Index">Exit</a>
+    </div>
+}
+
+@section scripts
+{
+    @RenderSection("scripts", required: false)
+}
+
+@RenderBody()

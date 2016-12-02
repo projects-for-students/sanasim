@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WebshopFeature>
+@using Sana.Sim.Business.Entities
+@{
+    var featuresHelper = new FeaturesHelper();
+    var features = featuresHelper.Features;
+}
+
+<div class="features-groups-list">
+    <h2>Features</h2>
+
+    @foreach (var group in features.Where(f => f.IsFunctionality).GroupBy(f => f.Tag).OrderBy(g => g.Key))
+    {
+        <div class="features-group">
+            <h3>@group.Key</h3>
+            <ul class="features-list reset">
+                @foreach (var feature in group.OrderBy(f => f.Name))
+                {
+                    var price = feature.ImplementationRequirements * BusinessConstants.PricePerHour;
+                    var usedFeature = Model?.SingleOrDefault(f => f.Definition.Id == feature.Id);
+                    var inputUsedAttribute = usedFeature != null ? "disabled='disabled' checked='checked'" : "name=Features";
+                    var featureUsedAttribute = usedFeature != null ? "used-feature" : "";
+                    <li class="feature @featureUsedAttribute">
+                        <label data-id="@feature.Id" class="toggler">
+                            <input type="checkbox" value="@feature.Id" data-id="@feature.Id" @inputUsedAttribute />
+                            <i><span class="on"></span><span class="off"></span></i>
+                            @feature.Name - $@Html.FormatPrice(price)
+                        </label>
+                        <div class="description">
+                            @feature.ImpactMessage
+                        </div>
+                        @if (usedFeature != null)
+                        {
+                            @Html.Partial("_ProgressBar", usedFeature.BuildProgress)
+                        }
+                        @foreach (var parent in featuresHelper.GetParentFeatures(feature.Id))
+                        {
+                            <div data-id="@parent.Id" class="feature-parent">
+                                <span>
+                                    @parent.Name
+                                </span>
+                            </div>
+                        }
+                        <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

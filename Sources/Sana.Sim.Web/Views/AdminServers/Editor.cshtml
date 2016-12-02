@@ -1,0 +1,49 @@
+﻿@model ServerInputViewModel
+@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+    ViewData["Title"] = "Admin - Create server";
+
+    bool isCreate = Model == null || Model.Id == null;
+    string action = isCreate ? "Create" : "Edit";
+}
+
+<h1>Create server</h1>
+
+<div>
+    <form method="post" asp-action="@action">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Name"></label>
+            </div>
+            <div class="form-value">
+                <input type="text" asp-for="Name" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Capacity"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="Capacity" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">
+                <label asp-for="Cost"></label>
+            </div>
+            <div class="form-value">
+                <input type="number" asp-for="Cost" />
+            </div>
+        </div>
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="btn-bottom">
+            <input type="submit" value="Save" class="btn" />
+        </div>
+    </form>
+</div>

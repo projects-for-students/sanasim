@@ -1,0 +1,591 @@
+﻿@model CreatePaybackCalculationWebshopInputViewModel
+@{ 
+    Layout = "~/Views/Layouts/Base.cshtml";
+}
+
+<div id="PaybackCalculator">
+    <h1>Payback calculator</h1>
+
+    <form asp-action="PaybackCalculator" asp-controller="Dashboard">
+        <div asp-validation-summary="All"></div>
+
+        <input type="hidden" asp-for="Name" />
+        <input type="hidden" asp-for="ProductCostPercentage" />
+        <input type="hidden" asp-for="OfflineServiceCostPercentage" />
+        <input type="hidden" asp-for="OnlineServiceCostPercentage" />
+
+        <div class="table">
+            <div class="table-row-group">
+                <div class="table-row">
+                    <div class="table-cell table-header"></div>
+                    <div class="table-cell table-header">SAVINGS</div>
+                    <div class="table-cell table-header">REVENUE INCREASE</div>
+                    <div class="table-cell table-header">INVESTMENTS</div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="table-row semibold">
+                    <div class="table-cell">KEY DATA</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">TOTAL SALES</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: totalSales" />
+                        <input type="hidden" asp-for="TotalSales" data-bind="textInput: totalSales" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">(EXPECTED) % ONLINE SALES</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: expectedOnlineSales" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">AVERAGE ORDER VALUE</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageOrderValue" />
+                        <input type="hidden" asp-for="AverageOrderValue" data-bind="textInput: averageOrderValue" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row">
+                    <div class="table-cell"># ONLINE ORDERS PER YEAR</div>
+                    <div class="table-cell">
+                        <span data-bind="text: onlineOrderPerYear"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Orders by phone, fax or email will demand a considerable amount of time from your inside sales employees. The effect of self-service of the customer will benefit both the customer as the internal organization.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">ORDER PROCESSING</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average # minutes to process an order</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageMinsPerOrder" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average # minutes to check an order</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageMinsCheckOrder" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Time saved per order</div>
+                    <div class="table-cell">
+                        <span data-bind="text: averageMinsPerOrder"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total minutes saved</div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalMinsSaved"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">FTE savings (per year)</div>
+                    <div class="table-cell">
+                        <span data-bind="text: fteSavings"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Yearly cost of order entry employee</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: yearlyOrderCost" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> yearly savings for order processing</div>
+                    <div class="table-cell">
+                        <span data-bind="text: yearlySavingsOrderProcess" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Double treatment is required for orders that were sent in per fax, email or phone. Unwillingly, this could cause errors when copying the order into the ERP-system. With integrated e-Commerce, this task will be automatically performed. Of course, errors need to be corrected and will require investments in both time and money. For statistical purposes, we've assumed a post-ecommerce error rate of 0,5% instead of 0%
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">ORDER ERRORS</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell"># orders</div>
+                    <div class="table-cell">
+                        <span data-bind="text: onlineOrderPerYear"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Pre-ecommerce error rate</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: preEcommerceErrorRate" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Post-ecommerce error rate</div>
+                    <div class="table-cell">
+                        <span data-bind="text: postEcommerceErrorRate"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Cost per error</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: costPerError" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> yearly savings for order errors</div>
+                    <div class="table-cell">
+                        <span data-bind="text: yearlySavingsOrderErrors"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    How many customer service requests do you receive on a daily basis, or before an order could be processed? Think of actual stock information, price information, discounts, invoice status, delivery status and so on. Here you can leverage the self service facilities of your integrated e-Commerce solutions the most
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">CUSTOMER SERVICE</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">
+                        # requests per day for customer service
+                        <div>(e.g. order status, invoice status, stock info, price info)</div>
+                    </div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: requestPerDayService" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average # minutes of customer service per request</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageMinsCustomerService" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">% of requests that can self served with Sana</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: percentageSelfServedSanaRequests" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total minutes saved</div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalMinsSavedService"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">FTE savings (per year)</div>
+                    <div class="table-cell">
+                        <span data-bind="text: fteSavingsService"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Yearly cost of customer service employee</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: yearlyCustomerServiceCost" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> yearly savings for customer service</div>
+                    <div class="table-cell">
+                        <span data-bind="text: yearlySavingsCustomerService"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Introducing a fully automated sales portal, you might be replacing other systems, used for order entry, customer service, information portals.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">REPLACING EXISTING SYSTEMS</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Yearly license fees</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: yearlyLicenseFee" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Yearly maintenance</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: yearlyMaintenance" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> yearly savings for replacing existing systems</div>
+                    <div class="table-cell">
+                        <span data-bind="text: yearlySavingsReplaceSystems"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Providing your sales force with a mobile solution will have them save time by automatically handling order process management.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">SALES FORCE AUTOMATION</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">% of orders processed by sales force</div>
+                    <div class="table-cell">
+                        <span data-bind="text: percentageOrdersSalesForce"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average # minutes to process an order pre-Sana</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageMinsOrderPreSana" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average # minutes to process an order post-Sana</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: averageMinsOrderPostSana" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Time saved per order</div>
+                    <div class="table-cell">
+                        <span data-bind="text: timeSavedPerOrderAutomation"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total minutes saved</div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalMinsSavedAutomation"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">FTE savings (per year)</div>
+                    <div class="table-cell">
+                        <span data-bind="text: fteSavingsAutomation"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Yearly cost of sales employee</div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: yearlySalesEmployeeCost" />
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> yearly savings for order processing</div>
+                    <div class="table-cell">
+                        <span data-bind="text: yearlySavingsCustomerServiceAutomation"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    By offering an online portal, customers will be ordering outside of regular business hours. This will give your company a competitive advantage, leading to more sales.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">24/7 AVAILABILITY</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total online sales</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalOnlineSales"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Expected increase in turnover due to 24/7 availability</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: expectedIncreaseTurnover247" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> revenue increase for 24/7 availability</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: revenueIncrease247" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Related items, alternative items, quick introduction of new products, shopping cart promotions. All tools are there to sell more of the same…
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">CROSS- & UP-SELLING</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total online sales</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalOnlineSales"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Expected increase in turnover due to cross- and upselling</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: expectedIncreaseTurnoverUpselling" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> revenue increase for cross- & up-selling</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: revenueIncreaseUpselling" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    Launch promotion campaigns easily and perfectly timed. Customers are instantly aware of special promotions through the web shop. Consider how this will increase your sales.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">ADVANCED PROMOTION CAMPAIGNS</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Total online sales</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: totalOnlineSales"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Expected increase in turnover due to promotion campaigns</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: expectedIncreaseTurnoverPromo" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> revenue increase for advanced promotion campaigns</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: revenueIncreasePromo" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i></div>
+                <div class="tooltip-text">
+                    With eCommerce portals capable of handling low-volume customers, reorders and replacements, sales forces will shift towards servicing high-margin customers. Mobile technologies will enable them serve these customers more effectively and efficiently; sales per rep and per customer visit will be driven up. On top of this, the sales force can increase its productivity by managing more customers.
+                </div>
+                <div class="table-row semibold">
+                    <div class="table-cell">SALESFORCE AUTOMATION</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Saved time (in weeks)</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: Math.ceil(savedTime())"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Lead to order time (in weeks)</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: leadToOrderTime" />
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">= extra orders</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: Math.floor(extraOrders())"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Average order value</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: averageOrderValue"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row highlighted">
+                    <div class="table-cell">-> revenue increase for sales force automation</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <span data-bind="text: revenueIncreaseAutomation"></span>
+                    </div>
+                    <div class="table-cell"></div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="table-row semibold">
+                    <div class="table-cell">INVESTMENT IN ECOMMERCE</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">One-time license fees</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: licenseFee" />
+                    </div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">First-year of maintenance</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: firstYearMaintenance" />
+                    </div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Implementation</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: implementation" />
+                    </div>
+                </div>
+                <div class="table-row hidden-row">
+                    <div class="table-cell">Hosting</div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell"></div>
+                    <div class="table-cell">
+                        <input type="number" data-bind="textInput: hosting" />
+                    </div>
+                </div>
+            </div>
+            <div class="table-row-group">
+                <div class="table-row highlighted totals">
+                    <div class="table-cell">Totals</div>
+                    <div class="table-cell">
+                        <span data-bind="text: savingsTotal"></span>
+                    </div>
+                    <div class="table-cell">
+                        <span data-bind="text: revenueIncreaseTotal"></span>
+                    </div>
+                    <div class="table-cell">
+                        <span data-bind="text: investmentsTotal"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-bottom">
+            <button class="btn">Create shop</button>
+        </div>
+    </form>
+</div>

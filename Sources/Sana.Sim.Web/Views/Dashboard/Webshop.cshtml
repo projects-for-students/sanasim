@@ -1,0 +1,13 @@
+﻿@model WebshopDetailsViewModel
+
+<h1 class="stacked-headers">@Model.Webshop.Name</h1>
+
+<form asp-action="Webshop" asp-controller="Dashboard">
+    <div asp-validation-summary="All"></div>
+        
+    @Html.Partial("_WebshopFeatures", Model.Webshop.Features)
+
+    <div class="btn-bottom">
+        <button class="btn">Save</button>
+    </div>
+</form>

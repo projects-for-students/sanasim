@@ -1,0 +1,71 @@
+﻿@model CreateWebshopInputViewModel
+@{
+    var featuresHelper = new FeaturesHelper();
+    var features = featuresHelper.Features;
+}
+
+<h1>New webshop</h1>
+
+<form asp-action="CreateWebshop" asp-controller="Dashboard">
+    <div asp-validation-summary="All"></div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="Name"></label>
+        </div>
+        <div class="form-value">
+            <input type="text" asp-for="Name" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="OfflineUsersCount">Offline Users Count</label>
+        </div>
+        <div class="form-value">
+            <input type="number" min="1" asp-for="OfflineUsersCount" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="OfflineAverageOrderAmount">Offline Average Order Amount</label>
+        </div>
+        <div class="form-value">
+            <input type="number" min="1" asp-for="OfflineAverageOrderAmount" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="ProductCostPercentage">Product Cost Percentage</label>
+        </div>
+        <div class="form-value">
+            <input type="number" min="0" asp-for="ProductCostPercentage" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="OfflineServiceCostPercentage">Offline Service Cost Percentage</label>
+        </div>
+        <div class="form-value">
+            <input type="number" min="0" asp-for="OfflineServiceCostPercentage" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-label">
+            <label asp-for="OnlineServiceCostPercentage">Online Service Cost Percentage</label>
+        </div>
+        <div class="form-value">
+            <input type="number" min="0" asp-for="OnlineServiceCostPercentage" />
+        </div>
+    </div>
+
+    @Html.Partial("_WebshopFeatures", Model.Features)
+
+    <div class="btn-bottom">
+        <button class="btn">Create shop</button>
+    </div>
+</form>

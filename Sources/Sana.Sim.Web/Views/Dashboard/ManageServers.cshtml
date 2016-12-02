@@ -1,0 +1,38 @@
+﻿@{
+    var servers = Framework.Servers.Get().ToSelectList();
+    var projectServers = Framework.Context.Project.Servers.Select(pd => pd.Definition);
+}
+
+<h1>Manage servers</h1>
+
+<form asp-action="AddServer" asp-controller="Dashboard">
+
+    <div class="form-row">
+        <div class="form-label">
+            <label>Select server:</label>
+        </div>
+        <div class="form-value">
+            <select name="serverId" asp-items="@servers"></select>
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-label">
+            <label>Available servers:</label>
+        </div>
+        <div class="form-value">
+            @foreach (var item in projectServers.OrderBy(d => d.Name))
+            {
+                <div>
+                    @item.Name, Cost: @item.Cost, Capacity: @item.Capacity
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="btn-bottom">
+        <input type="submit" value="Add server" class="btn" />
+    </div>
+
+</form>

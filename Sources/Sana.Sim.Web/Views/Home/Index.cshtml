@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1 class="text-center">Before you start:</h1>
+
+<div class="scenario-selector">
+    <div class="new-game">
+        @using (Html.BeginForm("StartGame", "Dashboard"))
+        {
+            <button class="btn-start-screen">
+                <i class="fa fa-gamepad fa-4x" aria-hidden="true"></i>
+                Start new game
+            </button>
+        }
+    </div>
+
+    <div class="payback-calculator">
+        <a class="btn-start-screen" href="/Dashboard/PaybackCalculator">
+            <i class="fa fa-money fa-4x" aria-hidden="true"></i>
+            Payback calculator
+        </a>
+    </div>
+</div>

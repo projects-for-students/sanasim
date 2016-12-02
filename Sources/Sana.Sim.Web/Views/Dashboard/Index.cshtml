@@ -1,0 +1,298 @@
+﻿@model DashboardViewModel
+@{
+    var projectDevelopers = Framework.Context.Project.Developers.Select(pd => pd.Definition);
+    var projectServers = Framework.Context.Project.Servers.Select(pd => pd.Definition);
+}
+
+<h1 class="stacked-headers" data-bind="click: showHeaderContent.bind($data,'1'), css: { 'active': selectedHeaderContent() == 1 }">Shops</h1>
+
+@*<h1 class="stacked-headers" data-bind="click: showHeaderContent.bind($data,'2'), css: { 'active': selectedHeaderContent() == 2 }">Developers</h1>*@
+
+<h1 class="stacked-headers" data-bind="click: showHeaderContent.bind($data,'3'), css: { 'active': selectedHeaderContent() == 3 }">Servers</h1>
+
+<section class="shop-list" data-bind="css: { active: selectedHeaderContent() == 1 }">
+    @foreach (var webshop in Model.Webshops)
+    {
+        var status = webshop.IsOnLine ? "Online" : "In Progress";
+
+        <div class="shop">
+            <div class="info">
+                <h2>@webshop.Name</h2>
+                
+                @if (!webshop.IsOnLine)
+                {
+                    <div class="status">
+                        <span>Shop status:</span>
+                        <span class="in-progress">@status</span>
+                    </div>
+                }
+                else if (Model.Report.WebshopReports.Any(r => r.WebshopName == webshop.Name && !r.IsEmpty()))
+                {
+                    <div class="status">
+                        <div class="view-weekly-report" data-name="@webshop.Name">
+                            <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                            Weekly report
+                        </div>
+                    </div>
+                }
+
+                @if (!webshop.IsOnLine)
+                {
+                    @Html.Partial("_ProgressBar", webshop.WebshopFeature.BuildProgress)
+                }
+                <div class="btn-features">
+                    <a class="btn btn-gray" asp-controller="Dashboard" asp-action="Webshop" asp-route-id="@webshop.Id">Features</a>
+                </div>
+                @if (webshop.IsOnLine)
+                {
+                    <div class="btn-features">
+                        <a class="btn btn-gray" asp-controller="Dashboard" asp-action="Actions" asp-route-id="@webshop.Id">Marketing</a>
+                    </div>
+                }
+            </div>
+            <div class="profit">
+                <div class="profit-line">
+                    <div class="label">Converted users</div>
+                    <div class="value">@webshop.ConvertedUsersCount / @webshop.OfflineUsersCount</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">New users</div>
+                    <div class="value">@webshop.NewUsersCount</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">Average order amount</div>
+                    <div class="value">$@Html.FormatPrice(webshop.AverageOrderAmount)</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">Income</div>
+                    <div class="value">$@Html.FormatPrice(webshop.ExpectedIncome)</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">Product cost</div>
+                    <div class="value">$@Html.FormatPrice(webshop.ExpectedProductCost)</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">Service cost</div>
+                    <div class="value">$@Html.FormatPrice(webshop.ExpectedServiceCost)</div>
+                </div>
+
+                <div class="profit-line">
+                    <div class="label">Profit</div>
+                    <div class="value">$@Html.FormatPrice(webshop.ExpectedProfit)</div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Webshops.Count() == 0) {
+        <div class="no-shops-message">
+            You don't have any shops yet.
+        </div>
+    }
+
+    @if (Model.Report != null && Model.Report.WebshopReports.Any(r => !r.IsEmpty()))
+    {
+        <h1>Weekly Report</h1>
+        <div class="report-list">
+            @foreach (var report in Model.Report.WebshopReports.Where(r => !r.IsEmpty()))
+            {
+                <div class="shop" data-name="@report.WebshopName">
+                    <h2>@report.WebshopName</h2>
+                    @if (report.WentLive)
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-rocket" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                Went live
+                            </div>
+                        </div>
+                    }
+
+                    @if (report.FinishedFeatures.Any())
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                The following features were implemented: 
+                                <div class="report-item-list">
+                                    @foreach (var item in report.FinishedFeatures)
+                                    {
+                                        <div>
+                                            - @item
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (report.RunningActions.Any())
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-line-chart" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                The following marketing actions are running now:
+                                <div class="report-item-list">
+                                    @foreach (var item in report.RunningActions)
+                                    {
+                                        <div>
+                                            - @item
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(report.InProgressFeature))
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-wrench" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                Currently developers are working on:
+                                <div class="report-item-list">
+                                    - @report.InProgressFeature
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (report.ConvertedUsersCountDifference > 0)
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-users" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                @report.ConvertedUsersCountDifference offline
+                                @if (report.ConvertedUsersCountDifference > 1)
+                                {
+                                    <span>users went online</span>
+                                }
+                                else
+                                {
+                                    <span>user went online</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (report.NewUsersCountDifference > 0)
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                @report.NewUsersCountDifference new
+                                @if(report.NewUsersCountDifference > 1)
+                                {
+                                    <span>users were registered</span>
+                                }
+                                else
+                                {
+                                    <span>user was registered</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (report.AverageOrderAmountDifference > 0)
+                    {
+                        <div class="report-item">
+                            <div class="report-cell">
+                                <i class="fa fa-percent" aria-hidden="true"></i>
+                            </div>
+                            <div class="report-cell">
+                                Average order amount increased by @Html.FormatPrice(report.AverageOrderAmountDifference * 100)%
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+</section>
+
+<section class="dev-list" data-bind="css: { active: selectedHeaderContent() == 2 }">
+    <div class="info">
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="text-right semibold">Cost</th>
+                    <th class="text-right semibold">Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in projectDevelopers.OrderBy(d => d.Name))
+                {
+                    <tr>
+                        <td class="semibold">@item.Name</td>
+                        <td class="text-right">@item.Cost</td>
+                        <td class="text-right">@item.Capacity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="btn-bottom">
+        <a asp-action="ManageDevelopers" asp-controller="Dashboard" class="btn btn-gray">Manage</a>
+    </div>
+</section>
+
+<section class="dev-list" data-bind="css: { active: selectedHeaderContent() == 3 }">
+    <div class="dev-list-totals">
+        <div class="dev-list-row">
+            <div class="dev-list-header">Total cost</div>
+            <div class="dev-list-header">Total capacity</div>
+            <div class="dev-list-header">Required capacity</div>
+        </div>
+        <div class="dev-list-row">
+            <div class="dev-list-details">$@Html.FormatPrice(projectServers.Sum(ps => ps.Cost))</div>
+            <div class="dev-list-details">@projectServers.Sum(ps => ps.Capacity)</div>
+            <div class="dev-list-details">@Math.Ceiling(BusinessConstants.RequiredServerCapacityPerUser * Framework.Context.Project.Webshops.Sum(w => w.UserCount))</div>
+        </div>
+    </div>
+
+    <div class="info">
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="text-right semibold">Cost</th>
+                    <th class="text-right semibold">Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in projectServers.OrderBy(d => d.Name))
+                {
+                    <tr>
+                        <td class="semibold">@item.Name</td>
+                        <td class="text-right">@item.Cost</td>
+                        <td class="text-right">@item.Capacity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="btn-bottom">
+        <a asp-action="ManageServers" asp-controller="Dashboard" class="btn btn-gray">Manage</a>
+    </div>
+</section>

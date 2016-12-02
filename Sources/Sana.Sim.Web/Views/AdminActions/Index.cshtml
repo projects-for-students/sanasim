@@ -1,0 +1,28 @@
+﻿@model EntityListViewModel<Feature>
+@{
+    Layout = @"~/Views/Layouts/Admin.cshtml";
+    ViewData["Title"] = "Admin - Marketing actions list";
+}
+
+<h1>Marketing actions list</h1>
+
+<div class="form-row">
+    <a asp-action="Create" class="btn">Create Marketing action</a>
+</div>
+
+<div class="features-groups">
+    @foreach (var group in Model.Entities.GroupBy(f => f.Tag).OrderBy(g => g.Key))
+    {
+        <div class="features-group">
+            <h2>@group.Key</h2>
+            <ul class="reset features-list">
+                @foreach (var feature in group.OrderBy(f => f.Name))
+                {
+                    <li class="feature">
+                        <a asp-action="Edit" asp-route-id="@feature.Id" class="feature-link">@feature.Name</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

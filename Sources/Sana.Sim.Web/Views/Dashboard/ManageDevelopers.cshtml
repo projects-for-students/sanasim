@@ -1,0 +1,30 @@
+﻿@{
+    var developers = Framework.Developers.Get().ToSelectList();
+    var projectDevelopers = Framework.Context.Project.Developers.Select(pd => pd.Definition);
+}
+
+<h1>Manage developers</h1>
+
+<form asp-action="AddDeveloper" asp-controller="Dashboard">
+
+    <div class="form-row">
+        <div class="form-label">
+            <label>Select developer:</label>
+        </div>
+        <div class="form-value">
+            <select name="developerId" asp-items="@developers"></select>
+        </div>
+    </div>
+
+    <input type="submit" value="Add" class="btn" />
+
+    <ul>
+        @foreach (var item in projectDevelopers.OrderBy(d => d.Name))
+        {
+            <li>
+                @item.Name, Cost: @item.Cost, Capacity: @item.Capacity
+            </li>
+        }
+    </ul>
+
+</form>

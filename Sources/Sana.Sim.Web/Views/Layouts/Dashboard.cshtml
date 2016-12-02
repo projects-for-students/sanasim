@@ -1,0 +1,258 @@
+﻿@{
+    Layout = "~/Views/Layouts/Base.cshtml";
+}
+
+@section Actions
+{
+    @if (Framework.Context.Exists)
+    {
+        @*<div class="header-item">
+                <a class="btn btn-create" asp-controller="Dashboard" asp-action="CreateWebshop">
+                    <i class="fa fa-shopping-basket" aria-hidden="true"></i>Create shop
+                </a>
+            </div>*@
+    if (Framework.Context.Project.Webshops.Any())
+    {
+        <div class="header-item">
+            <form asp-controller="Dashboard" asp-action="SkipWeek" method="post">
+                <button class="btn btn-skip" type="submit">
+                    <i class="fa fa-clock-o fa-lg" aria-hidden="true"></i>Skip week
+                </button>
+            </form>
+        </div>
+        <div class="header-item">
+            <a class="btn js-btn-precalculate btn-recalculate" asp-controller="Dashboard" asp-action="GetPreCalculationFeedback">
+                <i class="fa fa-calculator" aria-hidden="true"></i>Pre-Calculate
+            </a>
+        </div>
+    }
+    <div class="header-item end-game">
+        <form asp-controller="Dashboard" asp-action="EndGame" method="post">
+            <button class="btn btn-gray" type="submit">End game</button>
+        </form>
+    </div>
+
+    }
+}
+
+@section RightBar
+{
+    @if (Framework.Context.Exists)
+    {
+        <aside class="side-container">
+            <div class="profile">
+                @*<div class="photo">
+                        <img src="~/images/icons/businessman.png" />
+                    </div>
+
+                    <div class="name">
+                        @Framework.Context.Project.Name
+                    </div>*@
+
+                <div class="stats">
+                    <div class="stats-table-header">
+                        <div class="cash">
+                            <span>Cash:</span>
+                            <span>$@Html.FormatPrice(Framework.Context.Project.Cash)</span>
+                        </div>
+                        <div class="stats-header">
+                            <span>Statistics</span>
+                        </div>
+                    </div>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-right semibold">Weekly</th>
+                                <th class="text-right semibold">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="semibold">Income:</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.ExpectedIncome)</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.TotalIncome)</td>
+                            </tr>
+                            <tr>
+                                <td class="semibold">Expenses:</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.ExpectedCost)</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.TotalCost)</td>
+                            </tr>
+                            <tr>
+                                <td class="semibold">Profit:</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.ExpectedProfit)</td>
+                                <td class="text-right">$@Html.FormatPrice(Framework.Context.Project.TotalProfit)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                @if (Framework.Context.Project.Webshops.Any())
+                {
+                    <div class="charts">
+                        <div class="tabs">
+                            <div class="tab icon" data-bind="click: showTab.bind($data,'1'), css: { 'active': selectedTab() == 1 }">
+                                <div class="money">Money</div>
+                            </div>
+                            <div class="tab icon" data-bind="click: showTab.bind($data,'2'), css: { 'active': selectedTab() == 2 }">
+                                <div class="market">Market</div>
+                            </div>
+                        </div>
+                        <div class="tabs-content">
+                            <div class="tab-content" data-bind="css: { active: selectedTab() == 1 }">
+                                <canvas id="cashChart" width="400" height="400"></canvas>
+                            </div>
+                            <div class="tab-content" data-bind="css: { active: selectedTab() == 2 }">
+                                <canvas id="marketChart" width="400" height="400"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </aside>
+    }
+}
+
+@section scripts
+{
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $(function () {
+            if ($('.charts').length == 0)
+                return;
+
+            var buildChartDataSet = function (data, index) {
+
+                var colors = ['rgba(255,0,0,0.4)', 'rgba(0,0,255,0.4)', 'rgba(0,255,0,0.4)'];
+
+                var set = {
+                    label: data.name,
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: colors[index],
+                    borderColor: colors[index],
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: colors[index],
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: colors[index],
+                    pointHoverBorderColor: colors[index],
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: data.values,
+                    spanGaps: false,
+                };
+
+                return set;
+            };
+
+            $.post('@Url.Action("CashChartData", "Dashboard")', function (result) {
+                var datasets = [];
+                $.each(result.lines, function (index, lineData) {
+                    datasets.push(buildChartDataSet(lineData, index));
+                });
+                var data = {
+                    labels: result.iterations,
+                    datasets: datasets
+                };
+
+                var ctx = document.getElementById("cashChart");
+
+                if (window.innerHeight < 768) {
+                    ctx.setAttribute('height', '300');
+                }
+
+                var myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    min: 0,
+                                }
+                            }]
+                        },
+                        animation: false
+                    }
+                });
+            })
+        });
+
+        $(function () {
+            if ($('.charts').length == 0)
+                return;
+
+            $.post('@Url.Action("MarketChartData", "Dashboard")', function (result) {
+                var labels = [];
+                var data = [];
+                $.each(result, function (index, lineData) {
+                    labels.push(lineData.label);
+                    data.push(lineData.data);
+                });
+
+                var data = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: [
+                                "#FF6384",
+                                "#36A2EB",
+                                "#FFCE56"
+                            ],
+                            hoverBackgroundColor: [
+                                "#FF6384",
+                                "#36A2EB",
+                                "#FFCE56"
+                            ]
+                        }]
+                };
+
+                var ctx = document.getElementById("marketChart");
+
+                if (window.innerHeight < 768) {
+                    ctx.setAttribute('height', '300');
+                }
+
+                var myLineChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: data,
+                    animation: {
+                        animateScale: true
+                    }
+                });
+            })
+
+
+
+        });
+
+        $(function () {
+            $('.js-btn-precalculate').click(function () {
+                var $this = $(this);
+
+                $.post($this.attr('href'), function (result) {
+                    var msg = '';
+
+                    $.each(result, function (index, value) {
+                        msg += value + '\n\r';
+                    });
+
+                    if (msg.length == 0)
+                        msg = 'Everything is fine';
+                    alert(msg);
+                });
+
+                return false;
+            });
+        });
+    </script>
+}
+
+@RenderBody()
